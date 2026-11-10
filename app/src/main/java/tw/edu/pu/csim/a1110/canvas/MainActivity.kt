@@ -44,9 +44,9 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
     var CanvasWidth by remember { mutableStateOf(value = 0f) }
     var CamvaHeight by remember { mutableStateOf(value = 0f) }
 
-    // 小小兵的 X、Y 座標
-    var minionX by remember { mutableStateOf(100f) }
-    var minionY by remember { mutableStateOf(400f) }
+    // 小小兵的 X、Y 座標（已改為從 0,0 開始）
+    var minionX by remember { mutableStateOf(0f) }
+    var minionY by remember { mutableStateOf(0f) }
 
     // 控制是否正在移動的狀態
     var isMoving by remember { mutableStateOf(false) }
@@ -59,13 +59,15 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
         if (isMoving) {
             while (true) {
                 delay(1000L) // 每 1 秒
-                minionX += 80f // X 軸每次移動 80 像素
-                minionY += 80f // Y 軸每次移動 80 像素
+                minionX += 100f // X 軸每次移動 80 像素
+                minionY += 100f // Y 軸每次移動 80 像素
 
-                // 如果移動超過畫布邊界，重置回初始位置
+                // 如果移動超過畫布邊界（整張圖跑出畫面），歸零並停止
                 if (CanvasWidth > 0 && (minionX > CanvasWidth || minionY > CamvaHeight)) {
-                    minionX = 50f
-                    minionY = 200f
+                    minionX = 0f
+                    minionY = 0f
+                    isMoving = false
+                    break
                 }
             }
         }
@@ -127,7 +129,8 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
                 onClick = { isMoving = true },
                 modifier = Modifier.padding(horizontal = 4.dp)
             ) {
-                Text(if (minionX == 100f && minionY == 400f) "開始" else "繼續")
+                // 因為初始位置是 0f, 0f，所以判斷條件也一併更新
+                Text(if (minionX == 0f && minionY == 0f) "開始" else "繼續")
             }
 
             Button(
@@ -140,8 +143,8 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
             Button(
                 onClick = {
                     isMoving = false
-                    minionX = 100f
-                    minionY = 400f
+                    minionX = 0f
+                    minionY = 0f
                 },
                 modifier = Modifier.padding(horizontal = 4.dp)
             ) {
